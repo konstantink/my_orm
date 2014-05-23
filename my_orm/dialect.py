@@ -151,7 +151,6 @@ class OrderNode(Node):
         return query
 
 
-
 class SqlTree(object):
     def __init__(self):
         self._root = None
@@ -311,7 +310,11 @@ class Update(Statement):
     def __str__(self):
         if self.result is None:
             query = self.dump_query()
-            self.result = self.connection.execute(query)
+            try:
+                self.result = self.connection.execute(query)
+                self.connection.commit()
+            except:
+                self.connection.rollback()
         return str(self.result.rowcount)
 
     def Set(self, **kwargs):
